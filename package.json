@@ -1,0 +1,49 @@
+{
+    "name": "badi_date",
+    "version": "1.0.0",
+    "description": "A library to convert Date to Badi date and back.",
+    "main": "lib/index.js",
+    "directories": {
+        "test": "test"
+    },
+    "scripts": {
+        "test": "jest --config jestconfig.json",
+        "build": "tsc",
+        "format": "prettier --write \"src/**/*.ts\" \"src/**/*.js\"",
+        "lint": "eslint -p tsconfig.json",
+        "prepare": "npm run build",
+        "prepublishOnly": "npm test && npm run lint",
+        "preversion": "npm run lint",
+        "version": "npm run format && git add -A src",
+        "postversion": "git push && git push --tags"
+    },
+    "keywords": ["Calendar", "Badi", "Baha'i", "Sunset", "Nawruz", "Ayyam'i'Ha"],
+    "author": "Soroosh Pezeshki",
+    "license": "BSD-2-Clause",
+    "dependencies": {
+        "@types/suncalc": "^1.8.1",
+        "suncalc": "^1.8.0"
+    },
+    "devDependencies": {
+        "@jest/transform": "^27.4.6",
+        "@types/jest": "^27.0.3",
+        "eslint": "^8.6.0",
+        "eslint-config-prettier": "^8.3.0",
+        "jest": "^27.4.5",
+        "prettier": "^2.5.1",
+        "ts-jest": "^27.1.2",
+        "ts-node": "^10.4.0",
+        "typescript": "^4.5.4"
+    },
+    "files": [
+        "lib/**/*"
+    ],
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/Soroosh/badi_date-js"
+    },
+    "bugs": {
+        "url": "https://github.com/Soroosh/badi_date-js/issues"
+    },
+    "homepage": "https://github.com/Soroosh/badi_date-js"
+}
