@@ -1,11 +1,11 @@
-# badi_date
+# @soroooosh//badi_date
 
 A library to convert Date to Badi date and back.
 
 ## Install
 
 ```
-$ npm install badi_date
+$ npm install @soroooosh/badi_date
 ```
 
 ## Usage Example
