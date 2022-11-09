@@ -22,3 +22,7 @@ const ayyamIHa = date2.isAyyamIHa;
 const nextHolyDay = date2.nextHolyDate;
 
 ```
+
+
+## Known Issues
+Tests depends on the local time zone and break in most time zones

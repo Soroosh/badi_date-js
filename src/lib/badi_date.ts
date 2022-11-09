@@ -8,7 +8,7 @@ type nullableNumber = number | null;
 const LAST_YEAR_SUPPORTED = 221;
 const DAY_IN_MILLISECONDS = 86400000;
 const YEAR_ONE_IN_GREGORIAN = 1844;
-const YEAR_ZERO_IN_GREGORIAN = YEAR_ONE_IN_GREGORIAN -1;
+const YEAR_ZERO_IN_GREGORIAN = YEAR_ONE_IN_GREGORIAN - 1;
 
 // A Badi Date
 export class BadiDate {
@@ -66,7 +66,7 @@ export class BadiDate {
     }
     if (year > LAST_YEAR_SUPPORTED) {
       throw new Error(
-        'Years greater than '+ LAST_YEAR_SUPPORTED + ' are not supported yet');
+        'Years greater than ' + LAST_YEAR_SUPPORTED + ' are not supported yet');
     }
     this._monthIntern = month === 0
       ? 19
@@ -74,7 +74,7 @@ export class BadiDate {
         ? 20
         : month;
 
-    this.dayOfYear = this.getDayOfYear();    
+    this.dayOfYear = this.getDayOfYear();
   }
 
   // The year in the Vahid. A value in the range from [1-19]
@@ -140,8 +140,8 @@ export class BadiDate {
     longitude: nullableNumber, latitude: nullableNumber): Date {
     const fallback = new Date(date.getFullYear(), date.getMonth(), date.getDate(), 18);
     // return 6pm if no location or if in the poles
-    if (latitude == null ||
-      longitude == null ||
+    if (latitude === null ||
+      longitude === null ||
       latitude > 66.0 ||
       latitude < -66.0 ||
       Math.abs(longitude) > 180.0) {
@@ -149,6 +149,15 @@ export class BadiDate {
     }
     const sunCalcTimes = SunCalc.getTimes(date,
       latitude, longitude);
+    // The sunset of places far west might have the sunset calculated
+    // for the day before. In that case we add a day and calculate again.
+    if (sunCalcTimes.sunset?.getDate() === date.getDate() - 1) {
+      const sunCalcWithAdjustment = SunCalc.getTimes(
+        new Date(date.getFullYear(), date.getMonth(), date.getDate() + 1),
+        latitude,
+        longitude);
+      return sunCalcWithAdjustment.sunset ?? fallback;
+    }
     return sunCalcTimes.sunset ?? fallback;
   }
 
@@ -158,14 +167,14 @@ export class BadiDate {
 
   // Start Date
   getStartDate(): Date {
-    const date =  this.getNawRuzDate();
+    const date = this.getNawRuzDate();
     date.setUTCDate(date.getUTCDate() + this.dayOfYear - 2);
     return BadiDate._calculateSunSet(date, this.longitude, this.latitude);
   }
 
   // End Date
   getEndDate(): Date {
-    const date =  this.getNawRuzDate();
+    const date = this.getNawRuzDate();
     date.setUTCDate(date.getUTCDate() + this.dayOfYear - 1);
     return BadiDate._calculateSunSet(date, this.longitude, this.latitude);
   }
@@ -218,22 +227,22 @@ export class BadiDate {
     }
     const isAfterSunset = dateTime > BadiDate._calculateSunSet(dateTime,
       longitude, latitude);
-    const date = dateTime;  
+    const date = dateTime;
     if (isAfterSunset) date.setDate(dateTime.getDate() + 1);
     const badiYear = date.getFullYear() - YEAR_ZERO_IN_GREGORIAN;
     const isBeforeNawRuz =
       date < new Date(date.getFullYear(), 2, BadiDate.getDayOfNawRuz(badiYear));
-    const adaptedBadiYear = isBeforeNawRuz ? badiYear-1 : badiYear;
-    const lastNawRuz = isBeforeNawRuz 
+    const adaptedBadiYear = isBeforeNawRuz ? badiYear - 1 : badiYear;
+    const lastNawRuz = isBeforeNawRuz
       ? new Date(date.getFullYear() - 1, 2, BadiDate.getDayOfNawRuz(adaptedBadiYear))
       : new Date(date.getFullYear(), 2, BadiDate.getDayOfNawRuz(adaptedBadiYear));
-    const doy = Math.floor((date.getTime() - lastNawRuz.getTime())/DAY_IN_MILLISECONDS);
+    const doy = Math.floor((date.getTime() - lastNawRuz.getTime()) / DAY_IN_MILLISECONDS);
     // +1 because naw ruz has a doy of 1 but a difference of 0
     return BadiDate._fromYearAndDayOfYear(
-        adaptedBadiYear,
-        doy + 1,
-        longitude,
-        latitude);
+      adaptedBadiYear,
+      doy + 1,
+      longitude,
+      latitude);
   }
 
   // If the BadiDate is a Baha'i Holy day the Holy date else BahaiHolyDayEnum.NONE
